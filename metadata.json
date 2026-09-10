@@ -1,0 +1,7 @@
+{
+  "name": "Jack AI - Business & Marketing Autonomous Agent",
+  "description": "An intelligent executive business and marketing AI agent with multi-tenant organization governance, real-time Google Workspace email access, Safeguard approval staging, CRM/Calendar synchronization, and Firebase Firestore security.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

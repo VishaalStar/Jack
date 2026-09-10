@@ -1,0 +1,165 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with role-based access control (super_admin, org_head, org_member)",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["super_admin", "org_head", "org_member"] },
+        "organizationId": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "email", "role"]
+    },
+    "Organization": {
+      "title": "Organization",
+      "description": "Company / tenant managed in the platform",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "slug": { "type": "string" },
+        "headUserId": { "type": "string" },
+        "headUserEmail": { "type": "string", "format": "email" },
+        "memberCount": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "suspended"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name", "headUserEmail", "status"]
+    },
+    "OrgMember": {
+      "title": "OrgMember",
+      "description": "Team member belonging to an organization",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "organizationId": { "type": "string" },
+        "userId": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["org_head", "org_member"] },
+        "joinedAt": { "type": "string" }
+      },
+      "required": ["id", "organizationId", "email", "role"]
+    },
+    "StagedAction": {
+      "title": "StagedAction",
+      "description": "Prepared action awaiting human authorization in safeguard queue",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "organizationId": { "type": "string" },
+        "type": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "targetPlatform": { "type": "string" },
+        "status": { "type": "string", "enum": ["staged_for_approval", "approved_and_executed", "rejected"] },
+        "createdAt": { "type": "string" },
+        "confidenceScore": { "type": "number" }
+      },
+      "required": ["id", "organizationId", "type", "title", "status"]
+    },
+    "CRMContact": {
+      "title": "CRMContact",
+      "description": "Organization CRM lead or customer deal",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "organizationId": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "company": { "type": "string" },
+        "dealValue": { "type": "number" },
+        "stage": { "type": "string" },
+        "leadScore": { "type": "number" }
+      },
+      "required": ["id", "organizationId", "name", "email", "company", "dealValue", "stage"]
+    },
+    "CalendarEvent": {
+      "title": "CalendarEvent",
+      "description": "Executive meeting and scheduling entry",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "organizationId": { "type": "string" },
+        "title": { "type": "string" },
+        "startTime": { "type": "string" },
+        "endTime": { "type": "string" },
+        "platform": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "organizationId", "title", "startTime", "endTime", "status"]
+    },
+    "EmailMessage": {
+      "title": "EmailMessage",
+      "description": "Real-time synced inbox email message from company mailbox",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "organizationId": { "type": "string" },
+        "sender": { "type": "string" },
+        "senderEmail": { "type": "string", "format": "email" },
+        "recipientEmail": { "type": "string", "format": "email" },
+        "subject": { "type": "string" },
+        "snippet": { "type": "string" },
+        "date": { "type": "string" },
+        "isRead": { "type": "boolean" },
+        "priority": { "type": "string", "enum": ["high", "medium", "low"] }
+      },
+      "required": ["id", "organizationId", "senderEmail", "subject"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Immutable compliance and security activity log",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "organizationId": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "actor": { "type": "string" },
+        "action": { "type": "string" },
+        "targetSystem": { "type": "string" },
+        "encryptionHash": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "organizationId", "timestamp", "actor", "action", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profiles including role and organization assignment"
+    },
+    "/organizations/{orgId}": {
+      "schema": "Organization",
+      "description": "Organization tenants"
+    },
+    "/organizations/{orgId}/members/{memberId}": {
+      "schema": "OrgMember",
+      "description": "Members belonging to an organization"
+    },
+    "/organizations/{orgId}/stagedActions/{actionId}": {
+      "schema": "StagedAction",
+      "description": "Staged safeguard approval actions"
+    },
+    "/organizations/{orgId}/crmContacts/{contactId}": {
+      "schema": "CRMContact",
+      "description": "CRM contacts and customer deals"
+    },
+    "/organizations/{orgId}/calendarEvents/{eventId}": {
+      "schema": "CalendarEvent",
+      "description": "Scheduled executive calendar events"
+    },
+    "/organizations/{orgId}/emails/{emailId}": {
+      "schema": "EmailMessage",
+      "description": "Real-time synced email messages"
+    },
+    "/organizations/{orgId}/auditLogs/{logId}": {
+      "schema": "AuditLog",
+      "description": "Cryptographic audit logs"
+    }
+  }
+}
