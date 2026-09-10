@@ -19,7 +19,8 @@ import {
   ChevronDown,
   Home,
   FileText,
-  Rocket
+  Rocket,
+  LogOut
 } from 'lucide-react';
 import { 
   StagedAction, 
@@ -74,6 +75,7 @@ import { AuthModal } from './components/AuthModal';
 import { WelcomePortal } from './components/WelcomePortal';
 import { UserGuideModal } from './components/UserGuideModal';
 import { DeploymentModal } from './components/DeploymentModal';
+import { SignInGate } from './components/SignInGate';
 
 export default function App() {
   // Navigation View Mode: Welcome Landing Portal vs. Active AI Workstation Console
@@ -91,15 +93,16 @@ export default function App() {
   >('queue');
 
   // Multi-Organization & RBAC State (Firebase-backed with resilient local cache)
-  const [currentUser, setCurrentUser] = useState<UserProfile>(() => {
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
     const saved = localStorage.getItem('jack_current_user');
-    return saved ? JSON.parse(saved) : {
-      id: 'user-super-admin',
-      email: 'vishaal.s.1078@gmail.com',
-      displayName: 'Vishaal S. (Platform Super Admin)',
-      role: 'super_admin',
-      createdAt: new Date().toISOString()
-    };
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
   });
 
   const [organizations, setOrganizations] = useState<Organization[]>(() => {
@@ -247,7 +250,11 @@ export default function App() {
 
   // Persistence to local storage
   useEffect(() => {
-    localStorage.setItem('jack_current_user', JSON.stringify(currentUser));
+    if (currentUser) {
+      localStorage.setItem('jack_current_user', JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem('jack_current_user');
+    }
   }, [currentUser]);
 
   useEffect(() => {
@@ -583,6 +590,21 @@ export default function App() {
 
   const pendingApprovalsCount = stagedActions.filter(a => a.status === 'staged_for_approval').length;
 
+  const handleSignOut = async () => {
+    try {
+      await logOut();
+    } catch (e) {
+      console.warn('Sign out error:', e);
+    }
+    localStorage.removeItem('jack_current_user');
+    setCurrentUser(null);
+  };
+
+  // User Authentication Gate: Application is open for use, but sign-in is required on any platform
+  if (!currentUser) {
+    return <SignInGate onAuthSuccess={(user) => setCurrentUser(user)} />;
+  }
+
   // When in Welcome Portal Mode
   if (viewMode === 'welcome') {
     return (
@@ -600,6 +622,7 @@ export default function App() {
           onOpenDeployModal={() => setIsDeployModalOpen(true)}
           onQuickSwitchToDemoTester={handleQuickSwitchToDemoTester}
           onQuickSwitchToSuperAdmin={handleQuickSwitchToSuperAdmin}
+          onSignOut={handleSignOut}
         />
 
         <OrgGovernanceModal
@@ -770,6 +793,17 @@ export default function App() {
                 Sign In / Real-Time Sync
               </span>
             </div>
+          </button>
+
+          {/* Sign Out Trigger */}
+          <button
+            type="button"
+            onClick={handleSignOut}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-rose-500/20 border border-slate-800 hover:border-rose-500/40 text-xs font-semibold text-slate-400 hover:text-rose-300 transition-all cursor-pointer shadow-sm"
+            title="Sign out of your workstation session"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">Sign Out</span>
           </button>
         </div>
       </header>

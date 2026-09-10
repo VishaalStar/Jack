@@ -24,7 +24,8 @@ import {
   TrendingUp,
   Calendar,
   AlertTriangle,
-  Play
+  Play,
+  LogOut
 } from 'lucide-react';
 import { UserProfile, Organization } from '../types';
 
@@ -38,6 +39,7 @@ interface WelcomePortalProps {
   onOpenDeployModal: () => void;
   onQuickSwitchToDemoTester: () => void;
   onQuickSwitchToSuperAdmin: () => void;
+  onSignOut?: () => void;
 }
 
 interface DemoScenario {
@@ -93,7 +95,8 @@ export function WelcomePortal({
   onOpenGuideModal,
   onOpenDeployModal,
   onQuickSwitchToDemoTester,
-  onQuickSwitchToSuperAdmin
+  onQuickSwitchToSuperAdmin,
+  onSignOut
 }: WelcomePortalProps) {
   const [selectedScenario, setSelectedScenario] = useState<DemoScenario>(DEMO_SCENARIOS[0]);
   const [isSimulating, setIsSimulating] = useState(false);
@@ -169,6 +172,19 @@ export function WelcomePortal({
             <LogIn className="w-3.5 h-3.5 text-cyan-400" />
             <span>{currentUser.displayName ? 'Account' : 'Sign In'}</span>
           </button>
+
+          {/* Sign Out Button */}
+          {onSignOut && (
+            <button
+              type="button"
+              onClick={onSignOut}
+              className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-rose-500/20 border border-slate-800 hover:border-rose-500/40 text-xs font-semibold text-slate-400 hover:text-rose-300 transition-all cursor-pointer shadow-sm"
+              title="Sign out of current account"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Sign Out</span>
+            </button>
+          )}
         </div>
       </header>
 

@@ -15,7 +15,8 @@ import {
   Sparkles,
   ArrowRight,
   Code2,
-  GitBranch
+  GitBranch,
+  Link2
 } from 'lucide-react';
 
 interface DeploymentModalProps {
@@ -33,7 +34,7 @@ export function DeploymentModal({
   devAppUrl,
   firestoreDbId
 }: DeploymentModalProps) {
-  const [activeTab, setActiveTab] = useState<'cloudrun' | 'firebase' | 'vercel' | 'docker' | 'github'>('cloudrun');
+  const [activeTab, setActiveTab] = useState<'cloudrun' | 'firebase' | 'vercel' | 'docker' | 'github' | 'domain'>('domain');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   if (!isOpen) return null;
@@ -147,6 +148,19 @@ export function DeploymentModal({
           <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-3">
             <button
               type="button"
+              onClick={() => setActiveTab('domain')}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === 'domain'
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
+                  : 'bg-slate-950 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              }`}
+            >
+              <Link2 className="w-4 h-4" />
+              <span>Custom Domain & URL</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => setActiveTab('cloudrun')}
               className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'cloudrun'
@@ -155,7 +169,7 @@ export function DeploymentModal({
               }`}
             >
               <Cloud className="w-4 h-4" />
-              <span>Google Cloud Run (Recommended)</span>
+              <span>Google Cloud Run</span>
             </button>
 
             <button
@@ -210,6 +224,114 @@ export function DeploymentModal({
               <span>GitHub & Local Setup</span>
             </button>
           </div>
+
+          {/* Option 0: Custom Domain & URL Guide */}
+          {activeTab === 'domain' && (
+            <div className="space-y-5">
+              <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/30 text-emerald-200 text-xs flex items-start space-x-3">
+                <Link2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-bold text-white text-sm mb-1">Yes! You Can Create a Custom URL & Edit It Anytime</h4>
+                  <p className="leading-relaxed text-emerald-300/90">
+                    Whether you use a branded short link, a free hosting subdomain, or your own personal domain (<code className="text-white font-mono font-bold">yourname.com</code>), you can <strong>edit, rename, or swap the URL at any time</strong> with zero downtime and no lock-in.
+                  </p>
+                </div>
+              </div>
+
+              {/* 3 Pathways Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Method 1 */}
+                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2.5 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold uppercase">
+                        Instant (30s)
+                      </span>
+                      <span className="text-[11px] text-slate-400 font-mono">100% Free</span>
+                    </div>
+                    <h5 className="font-bold text-white text-xs">1. Free Branded Short Link</h5>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      Create an instant custom link (e.g. <strong className="text-slate-200">dub.sh/jackai</strong> or <strong className="text-slate-200">tinyurl.com/jackai-vishaal</strong>) pointing directly to your live app.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-800/80 text-[11px] text-slate-300 space-y-1">
+                    <span className="text-cyan-400 font-semibold block">Can you edit it?</span>
+                    <span>Yes! In Dub.co or TinyURL dashboard, you can change the target URL anytime you update your app.</span>
+                  </div>
+                </div>
+
+                {/* Method 2 */}
+                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2.5 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-bold uppercase">
+                        Vercel / Netlify
+                      </span>
+                      <span className="text-[11px] text-slate-400 font-mono">1-Click</span>
+                    </div>
+                    <h5 className="font-bold text-white text-xs">2. Free Subdomain URL</h5>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      Deploy the code to Vercel and pick any free subdomain like <strong className="text-slate-200">jack-ai.vercel.app</strong> or <strong className="text-slate-200">vishaal-jackai.vercel.app</strong>.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-800/80 text-[11px] text-slate-300 space-y-1">
+                    <span className="text-cyan-400 font-semibold block">Can you edit it?</span>
+                    <span>Yes! In Project Settings ➔ Domains, you can type a new name and click Save in 2 seconds.</span>
+                  </div>
+                </div>
+
+                {/* Method 3 */}
+                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2.5 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/20 font-bold uppercase">
+                        Own Domain
+                      </span>
+                      <span className="text-[11px] text-slate-400 font-mono">Custom DNS</span>
+                    </div>
+                    <h5 className="font-bold text-white text-xs">3. Custom Domain (Cloud Run)</h5>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      Map your purchased domain (e.g. <strong className="text-slate-200">jackai.com</strong> or <strong className="text-slate-200">app.yourcompany.com</strong>) with automatic free SSL.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-800/80 text-[11px] text-slate-300 space-y-1">
+                    <span className="text-cyan-400 font-semibold block">Can you edit it?</span>
+                    <span>Yes! DNS CNAME records and Cloud Run mappings can be updated or swapped at any time.</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step-by-Step for Setting Up Custom Domain on Cloud Run */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                <h4 className="text-xs font-semibold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                  <span>How to map your domain to Google Cloud Run:</span>
+                </h4>
+                <ol className="text-xs text-slate-300 space-y-2 list-decimal list-inside leading-relaxed pl-1">
+                  <li>Deploy your app via the top-right <strong>Deploy to Cloud Run</strong> button.</li>
+                  <li>In the <a href="https://console.cloud.google.com/run" target="_blank" rel="noreferrer" className="text-cyan-400 hover:underline">Google Cloud Console</a>, navigate to <strong>Cloud Run</strong> ➔ <strong>Manage Custom Domains</strong>.</li>
+                  <li>Click <strong>Add Mapping</strong>, select service <code className="text-cyan-300 font-mono">jack-ai</code>, and enter your domain name (e.g., <code className="text-white font-mono">app.yourdomain.com</code>).</li>
+                  <li>Copy the provided DNS record (e.g., <code className="text-emerald-400 font-mono">CNAME ghs.googlehosted.com</code>) and paste it into your domain registrar (GoDaddy, Namecheap, Cloudflare, etc.).</li>
+                  <li>Google Cloud will automatically provision and renew your free SSL/TLS certificate!</li>
+                </ol>
+              </div>
+
+              {/* Quick Copy Target URL for URL Shorteners */}
+              <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                <div className="min-w-0">
+                  <span className="font-semibold text-white block">Current Shared App URL to redirect to:</span>
+                  <span className="font-mono text-cyan-400 text-[11px] truncate block">{sharedAppUrl}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard(sharedAppUrl, 'shared_target')}
+                  className="px-3.5 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition-colors shrink-0 flex items-center gap-1.5 cursor-pointer"
+                >
+                  {copiedKey === 'shared_target' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedKey === 'shared_target' ? 'Copied' : 'Copy Live Link'}</span>
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Option 1: Google Cloud Run */}
           {activeTab === 'cloudrun' && (
@@ -290,36 +412,62 @@ firebase deploy --only hosting,firestore:rules`}
             </div>
           )}
 
-          {/* Option 3: Vercel / Netlify */}
+          {/* Option 3: Vercel */}
           {activeTab === 'vercel' && (
             <div className="space-y-4">
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Because Jack AI compiles into an ultra-fast static SPA bundle in the <code className="text-cyan-300 font-mono">dist/</code> directory, you can deploy it to Vercel or Netlify in under 60 seconds.
-              </p>
+              <div className="p-4 rounded-xl bg-gradient-to-r from-blue-500/10 to-indigo-500/10 border border-blue-500/30 text-blue-200 text-xs flex items-start space-x-3">
+                <Sparkles className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-bold text-white text-sm mb-1">Vercel Deployment Ready!</h4>
+                  <p className="leading-relaxed text-slate-300">
+                    Your repository now includes a configured <code className="text-cyan-300 font-mono">vercel.json</code> and serverless API endpoints (<code className="text-cyan-300 font-mono">api/agent.ts</code> and <code className="text-cyan-300 font-mono">api/health.ts</code>). You can deploy in under 60 seconds with full AI backend support.
+                  </p>
+                </div>
+              </div>
 
+              {/* Method A: Via GitHub (Recommended) */}
+              <div className="space-y-2">
+                <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Method A: Connect via GitHub (1-Click Automated CI/CD)</h4>
+                <ol className="list-decimal list-inside space-y-2 text-xs text-slate-300 bg-slate-950 p-4 rounded-xl border border-slate-800 leading-relaxed">
+                  <li>In Google AI Studio, click <strong>Settings</strong> (top right) ➔ <strong>Export to GitHub</strong>.</li>
+                  <li>Go to <strong><a href="https://vercel.com/new" target="_blank" rel="noreferrer" className="text-cyan-400 hover:underline">vercel.com/new</a></strong> and log in.</li>
+                  <li>Import your newly created GitHub repository.</li>
+                  <li>Vercel will auto-detect Vite:
+                    <div className="mt-2 ml-4 p-2.5 rounded-lg bg-slate-900 border border-slate-800 font-mono text-[11px] text-slate-300 space-y-1">
+                      <div>Framework Preset: <span className="text-cyan-300 font-bold">Vite</span></div>
+                      <div>Build Command: <span className="text-cyan-300 font-bold">npm run build</span></div>
+                      <div>Output Directory: <span className="text-cyan-300 font-bold">dist</span></div>
+                    </div>
+                  </li>
+                  <li>Under <strong>Environment Variables</strong> on Vercel, add:
+                    <div className="mt-1 ml-4 text-[11px] text-emerald-400 font-mono">
+                      GEMINI_API_KEY = (your Gemini API key)
+                    </div>
+                  </li>
+                  <li>Click <strong>Deploy</strong>! Vercel builds and hosts your app with global CDN and SSL.</li>
+                </ol>
+              </div>
+
+              {/* Method B: Via Vercel CLI */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Deploy with Vercel CLI</h4>
+                  <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Method B: Deploy with Vercel CLI</h4>
                   <button
                     type="button"
-                    onClick={() => copyToClipboard(`npm run build\nnpx vercel --prod`, 'vercel')}
+                    onClick={() => copyToClipboard(`npm i -g vercel\nvercel --prod`, 'vercel')}
                     className="text-[11px] text-cyan-400 hover:text-cyan-300 flex items-center space-x-1"
                   >
                     {copiedKey === 'vercel' ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                     <span>{copiedKey === 'vercel' ? 'Copied' : 'Copy'}</span>
                   </button>
                 </div>
-                <pre className="p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-[11px] text-slate-200 overflow-x-auto">
-{`# 1. Build
-npm run build
+                <pre className="p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-[11px] text-cyan-300 overflow-x-auto">
+{`# 1. Install Vercel CLI (if not already installed)
+npm i -g vercel
 
-# 2. Deploy to Vercel
-npx vercel --prod`}
+# 2. Deploy directly from your terminal
+vercel --prod`}
                 </pre>
-              </div>
-
-              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-400">
-                <span className="font-semibold text-slate-200">Settings:</span> Framework Preset: <span className="font-mono text-cyan-300">Vite</span> • Build Command: <span className="font-mono text-cyan-300">npm run build</span> • Output Directory: <span className="font-mono text-cyan-300">dist</span>
               </div>
             </div>
           )}
